@@ -1,0 +1,21 @@
+
+*install*
+
+conda create -p C:\[path]\env_name
+conda activate C:\[path]\env_name
+
+# install python version
+conda install python==3.11
+
+cd C:\[path]\repo_name
+pip install -r requirements.txt
+
+------------------------------------
+
+*uninstall*
+
+# within Anaconda prompt, check if corresponding virtual environment exists by listing environments
+conda info --envs
+# remove target environment
+conda remove -p C:\[path]\env_name --all
+
