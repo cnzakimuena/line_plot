@@ -5,9 +5,9 @@ The appearance of the plot is customized and the final figure is saved.
 """
 import os
 import numpy as np
-import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import seaborn as sns
 import pypalettes
 
@@ -93,7 +93,7 @@ def generate_plot(metrics_df,
     plt.rcParams.update({'font.size': 22})
 
     # generate plot
-    fig, ax = plt.subplots(figsize=(18, 9))
+    fig, ax = plt.subplots(figsize=(10, 9))
 
     x_range = [global_x[0] - 1.5, global_x[-1] + 1.5]
     plt.xlim(x_range)
@@ -131,17 +131,17 @@ def generate_plot(metrics_df,
             current_q3_list = subset_data_df[metrics_variable_list[2]].tolist()
             p_location_reference = (y_range[1]-y_range[0]) * 0.08
             for h, current_p_value in enumerate(current_p_values_list):
-                if current_p_value < 0.05:
-                    y_location = current_q3_list[h + 1] + p_location_reference
+                if current_p_value is not None and current_p_value < 0.05:
+                    y_location = current_q3_list[h] + p_location_reference
                     star_number = get_star_number(current_p_value)
                     star_string = r'$\mathbf{\ast}$' * star_number
-                    ax.annotate(star_string, xy=(x[h + 1], y_location),
+                    ax.annotate(star_string, xy=(x[h], y_location),
                                 color=curr_color_name,
                                 fontsize="xx-small", weight='normal',
                                 horizontalalignment='center',
                                 verticalalignment='center')
 
-    plt.yticks(np.linspace(y_range[0], y_range[1], num=8).tolist())
+    plt.yticks(np.linspace(y_range[0], y_range[1], num=5).tolist())
     if 'specified_x_tick_labels' in plot_kwargs:
         plt.xticks(global_x, plot_kwargs['specified_x_tick_labels'])
         ax.tick_params(axis='x', rotation=45)
@@ -160,91 +160,65 @@ def generate_plot(metrics_df,
     # hide the right and top spines
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
-    # change all spines
-    for axis in ['bottom', 'left', 'top', 'right']:
+    # change spines
+    for axis in ['left', 'bottom']:
         plt.gca().spines[axis].set_linewidth(3)
     plt.gca().tick_params(width=3)
 
     # adjust subplots spacing
     # if subplots are added, can include, for e.g., 'wspace=0.4, hspace=0.4'
     # to control padding between subplots
-    plt.subplots_adjust(bottom=0.3, top=0.85, left=0.15, right=0.9)
+    plt.subplots_adjust(bottom=0.35, top=0.85, left=0.2, right=0.85)
 
     # add global title
     if 'super_title' in plot_kwargs:
         fig.suptitle(plot_kwargs['super_title'], fontsize="large", color="black")
 
+    # add legend
+    condition_names = [condition_variable + " " + str(i) for i in condition_unique_values]
+    colors = dict(zip(condition_names, plot_kwargs['palette_list']))
+    labels = list(colors.keys())
+    circle_handles = [Line2D([0], [0], marker='o', color='w',
+                           markerfacecolor=colors[label], markersize=16) for label in labels]
+    plt.legend(circle_handles, labels, frameon=False, bbox_to_anchor=(0.4, 0.98), ncol=1)
+
     # draw lines below subplots
     trans = ax.get_xaxis_transform()
-    ax.plot([3.5, 8.5], [-.25, -.25], color="black", transform=trans, clip_on=False, linewidth=3)
-    plt.figtext(0.315, 0.14, r"IGF1R $\mathbf{\uparrow}$",
+    ax.plot([3.5, 8.5], [-.27, -.27], color="black", transform=trans, clip_on=False, linewidth=3)
+    plt.figtext(0.45, 0.19, r"IGF1R $\mathbf{\uparrow}$",
                 ha="center", va="top", fontsize=24, color="black")
-    ax.plot([9.5, 25], [-.25, -.25], color="black", transform=trans, clip_on=False, linewidth=3)
-    plt.figtext(0.65, 0.14, r"IGF1R $\mathbf{\downarrow}$",
+    ax.plot([9.5, 14.5], [-.27, -.27], color="black", transform=trans, clip_on=False, linewidth=3)
+    plt.figtext(0.7, 0.19, r"IGF1R $\mathbf{\downarrow}$",
                 ha="center", va="top", fontsize=24, color="black")
 
 
 if __name__ == '__main__':
 
     # --- read data ---
-    # if preprocessed data does not exist, generate preprocessed data
-    if not os.path.exists(r'.\metrics.csv') and not os.path.exists(r'.\p_values.csv'):
-        EXAMPLE_DATA_PATH = r'.\chickweight.csv'
-        example_preprocessor = Preprocessor(EXAMPLE_DATA_PATH)
-        # specify preprocessing variables
-        example_subject_variable = example_preprocessor.data_df.columns[2]
-        example_dependent_variable = example_preprocessor.data_df.columns[0]
-        example_condition_variable = example_preprocessor.data_df.columns[3]
-        example_group_variable = example_preprocessor.data_df.columns[1]
-        # gather preprocessed data
-        example_preprocessor.get_preprocessed_data(example_subject_variable,
-                                                example_dependent_variable,
-                                                example_condition_variable,
-                                                example_group_variable,
-                                                save_csv_files=True)
-    # read preprocessed data
-    EXAMPLE_METRICS_PATH = r'.\metrics.csv'
-    EXAMPLE_P_VALUES_PATH = r'.\p_values.csv'
-    example_metrics_df = pd.read_csv(EXAMPLE_METRICS_PATH)
-    example_p_values_df = pd.read_csv(EXAMPLE_P_VALUES_PATH)
-
-    # --- specify plotting variables ---
-    example_condition_variable = example_metrics_df.columns[3]
-    example_group_variable = example_metrics_df.columns[4]
-    # store average, Q1 and Q3 metrics variables, respectively
-    example_metrics_variable_list = [example_metrics_df.columns[0],
-                                     example_metrics_df.columns[1],
-                                     example_metrics_df.columns[2]]
-
+    EXAMPLE_DATA_PATH = r'.\chickweight.csv'
+    example_data = Preprocessor(EXAMPLE_DATA_PATH)
+    example_data.get_preprocessed_data(save_csv_files=False)
     # apply filters (optional)
-    specified_filter_list=[0, 2]
-    example_metrics_df = Preprocessor.apply_filter(example_metrics_df,
-                                                    example_condition_variable,
-                                                    specified_filter_list)
-    example_p_values_df = Preprocessor.apply_filter(example_p_values_df,
-                                                    example_condition_variable,
-                                                    specified_filter_list)
-
+    example_data.apply_multiple_filters([0, 2], list(range(0, 7)))
     # specify data-related plotting parameters (optional)
-    example_group_unique_values = \
-        sorted(list(set(example_metrics_df[example_group_variable].tolist())))
-    example_x_tick_labels = \
-        ['hatching'] + [str(s) + " days" for s in example_group_unique_values[1:]]
+    example_x_tick_labels = example_data.get_x_tick_labels()
+
     # palette setup (optional)
-    example_condition_unique_values = \
-        sorted(list(set(example_metrics_df[example_condition_variable].tolist())))
+    example_condition_list = \
+        example_data.prep_results["metrics"][example_data.prep_variables["condition"]].tolist()
+    example_condition_unique_values = sorted(list(set(example_condition_list)))
     cmap = pypalettes.load_cmap("Chlorurus_microrhinos",
                                 keep_first_n=len(example_condition_unique_values))
     pypalettes_list = cmap.colors # return colors as a list of hexadecimal values
 
     # --- plot data ---
-    generate_plot(example_metrics_df,
-                  example_group_variable,
-                  example_metrics_variable_list,
-                  example_condition_variable,
-                  [-50, 300],
-                  p_values_df=example_p_values_df,
-                  p_values_variable=example_p_values_df.columns[0],
+    generate_plot(example_data.prep_results["metrics"],
+                  example_data.prep_variables["group"],
+                  example_data.prep_results["metrics variables"],
+                  example_data.prep_variables["condition"],
+                  [-50, 150],
+                  p_values_df=example_data.prep_results["p-values"],
+                  p_values_variable=example_data.prep_results["p-values variable"],
                   specified_x_label='Age',
                   specified_y_label='Weight change [g]',
                   specified_x_label_text_padding=60,
