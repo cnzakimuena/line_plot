@@ -178,9 +178,17 @@ def generate_plot(metrics_df,
     condition_names = [condition_variable + " " + str(i) for i in condition_unique_values]
     colors = dict(zip(condition_names, plot_kwargs['palette_list']))
     labels = list(colors.keys())
-    circle_handles = [Line2D([0], [0], marker='o', color='w',
-                           markerfacecolor=colors[label], markersize=16) for label in labels]
-    plt.legend(circle_handles, labels, frameon=False, bbox_to_anchor=(0.4, 0.98), ncol=1)
+    circle_handles = [Line2D([0], [0],
+                             color=colors[label],       # create horizontal line
+                             marker='o',                # circle marker
+                             markerfacecolor=colors[label],
+                             markeredgecolor=colors[label],
+                             markersize=12,
+                             linewidth=3)               # adjust line thickness as needed
+                      for label in labels]
+    plt.legend(circle_handles, labels, frameon=False, bbox_to_anchor=(0.4, 0.98), ncol=1,
+               handlelength=1.0,    # adjust line length
+               numpoints=1)         # align marker on line center
 
     # draw lines below subplots
     trans = ax.get_xaxis_transform()
