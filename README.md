@@ -1,7 +1,7 @@
 # Line Plot
 Script to generate a line plot with error bars. The plot uses the chick weight dataset for demonstration. 
 
-The publication featuring the dataset used for demonstration (Crowder & Hand, 1990), the publications used for confirming weight units (Knížetová et al, 1991; Roberts, 1964), and the publications from which insulin-like growth factor 1 receptor information was retrieved (Duclos & Goddard, 1990; Kim, 2000) are listed below:
+The publication featuring the dataset used for demonstration (Crowder & Hand, 1990), the publications used for confirming weight units (Knížetová et al, 1991; Roberts, 1964) and the publications from which insulin-like growth factor 1 receptor information was retrieved (Duclos & Goddard, 1990; Kim, 2000) are listed below:
 
 - Crowder, M. J., & Hand, D. J. (1990). Analysis of repeated measures (Vol. 41). CRC Press.
 - [Knížetová, H., Hyanek, J., Kníže, B., & Roubíček, J. (1991). Analysis of growth curves of fowl. I. Chickens. British Poultry Science, 32(5), 1027-1038.](https://doi.org/10.1080/00071669108417427)
