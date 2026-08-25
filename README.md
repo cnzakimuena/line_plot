@@ -1,13 +1,20 @@
 # Line Plot
 Script to generate a line plot with error bars. The chick weight dataset (Crowder & Hand, 1990) including weight units ([Roberts, 1964](https://doi.org/10.3382/ps.0430238); [Knížetová et al, 1991](https://doi.org/10.1080/00071669108417427)) and custom labelling depicting chicken growth endocrine regulation ([Duclos & Goddard, 1990](https://doi.org/10.1677/joe.0.1250199); [Kim, 2000](https://doi.org/10.5713/ajas.2010.10329)) are used for demonstration.
 
-installation:
+Environment setup:
+
+```bash
+conda create -n myenv python=3.11
+conda activate myenv
+```
+
+Dependencies installation:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-usage:
+Usage:
 
 ```bash
 python line_plot.py
