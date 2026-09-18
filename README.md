@@ -20,7 +20,9 @@ Usage:
 python line_plot.py
 ```
 
-![example image](figure.png)
+<p align="center">
+    <img src="figure.png" alt="example image" height="500">
+</p>
 
 Cite As
 
