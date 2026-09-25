@@ -17,7 +17,7 @@ pip install -r requirements.txt
 Usage:
 
 ```bash
-python line_plot.py
+python plot_line.py
 ```
 
 <p align="center">
